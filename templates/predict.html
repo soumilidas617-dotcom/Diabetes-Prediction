@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Diabetes Risk - DPS HealthTech</title>
+    <style>
+        /* --- General Styling (Keeping from previous CSS) --- */
+        :root {
+            --dark-bg: #032025;
+            --accent-blue: #00e6e6; /* Cyan/Blue Glow */
+            --accent-orange: #ff9900; /* Orange/Amber Glow */
+            --text-light: #e6ffff;
+            --nav-bg: rgba(3, 32, 37, 0.8);
+            --section-bg: #05333b;
+            --input-bg: #011012; /* Very dark input field */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 80px; /* Space for fixed header */
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+
+        a:hover {
+            color: var(--text-light);
+        }
+        
+        /* --- Shared Header/Footer CSS (Abbreviated for brevity, assuming full CSS is linked/included) --- */
+        
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.1);
+        }
+        
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+
+        .navbar a {
+            margin-left: 30px;
+            font-size: 1.05em;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .contact-btn {
+            background-color: var(--accent-blue);
+            color: var(--dark-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+        
+
+        /* --- Footer Styles (Simplified for this snippet) --- */
+        footer {
+            background-color: #021a1f;
+            padding: 50px 5%;
+            font-size: 0.9em;
+            border-top: 5px solid var(--accent-orange);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-col {
+            width: 20%; 
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col.about-col {
+            width: 30%; 
+            min-width: 250px;
+        }
+        
+        .footer-col h3 {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(230, 255, 255, 0.7);
+            padding: 5px 0;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+
+        /* --- NEW PREDICT PAGE STYLES --- */
+        .page-hero {
+            padding: 100px 5% 50px;
+            text-align: center;
+            background-color: #05333b;
+            border-bottom: 3px solid var(--accent-orange);
+        }
+
+        .page-hero h1 {
+            font-size: 3.5em;
+            color: var(--accent-blue);
+            text-shadow: 0 0 10px rgba(0, 230, 230, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .page-hero p {
+            font-size: 1.2em;
+            max-width: 800px;
+            margin: 0 auto;
+            color: rgba(230, 255, 255, 0.8);
+        }
+        
+        .prediction-section {
+            padding: 50px 5%;
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .variable-analysis-section {
+        padding: 60px 5%;
+        text-align: center;
+        background-color: var(--dark-bg); /* Match main background */
+        border-top: 1px solid rgba(255, 153, 0, 0.1);
+    }
+    
+    .variable-analysis-section h2 {
+        font-size: 2.2em;
+        color: var(--accent-blue);
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .section-subtitle {
+        max-width: 900px;
+        margin: 0 auto 40px;
+        font-size: 1.1em;
+        color: rgba(230, 255, 255, 0.8);
+    }
+
+    .analysis-grid {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        flex-wrap: wrap;
+    }
+
+    .analysis-card {
+        background-color: #011012; /* Very dark background for a floating effect */
+        padding: 25px;
+        border-radius: 8px;
+        max-width: 280px;
+        text-align: left;
+        border: 1px solid rgba(0, 230, 230, 0.2);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .analysis-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--accent-orange);
+    }
+
+    .variable-icon {
+        font-size: 2em;
+        display: block;
+        margin-bottom: 10px;
+        color: var(--accent-orange); /* Highlight icon */
+    }
+
+    .analysis-card h3 {
+        color: var(--accent-blue);
+        font-size: 1.25em;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(0, 230, 230, 0.1);
+        padding-bottom: 5px;
+    }
+
+    .analysis-card p {
+        margin: 0;
+        font-size: 0.95em;
+        color: rgba(230, 255, 255, 0.7);
+    }
+    
+    @media (max-width: 768px) {
+        .analysis-grid {
+            flex-direction: column;
+            align-items: center;
+        }
+        .analysis-card {
+            max-width: 90%;
+        }
+    }
+
+        /* Input Form Styling */
+        .input-form-container {
+            flex: 2;
+            background-color: var(--section-bg);
+            padding: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 153, 0, 0.2);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-form-container h2 {
+            color: var(--accent-orange);
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 1em;
+            margin-bottom: 5px;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .form-group input {
+            padding: 12px;
+            border: 1px solid rgba(0, 230, 230, 0.4);
+            border-radius: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-light);
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 153, 0, 0.5);
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            background: linear-gradient(45deg, var(--accent-orange), #ff6600);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #ff6600, var(--accent-orange));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(255, 153, 0, 0.4);
+        }
+
+
+        /* Sidebar Info & Results Styling */
+        .info-sidebar {
+            flex: 1;
+            background-color: #021a1f;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+            height: fit-content;
+        }
+
+        .info-sidebar h3 {
+            color: var(--accent-orange);
+            border-bottom: 2px solid rgba(255, 153, 0, 0.4);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .info-sidebar ul {
+            list-style: none;
+            padding-left: 0;
+            font-size: 0.95em;
+        }
+
+        .info-sidebar ul li {
+            margin-bottom: 10px;
+            padding-left: 15px;
+            position: relative;
+        }
+        
+        .info-sidebar ul li::before {
+            content: "\2022"; /* Bullet point */
+            color: var(--accent-blue);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .security-note {
+            margin-top: 20px;
+            padding: 15px;
+            border-left: 3px solid var(--accent-blue);
+            background-color: rgba(0, 230, 230, 0.1);
+            font-size: 0.9em;
+        }
+        
+        /* Placeholder Results Area */
+        .results-preview {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: var(--input-bg);
+            border-radius: 10px;
+            border: 1px solid var(--accent-orange);
+            text-align: center;
+        }
+        
+        .results-preview h3 {
+             color: var(--accent-orange);
+             margin-bottom: 10px;
+        }
+        
+        .results-preview p {
+            color: rgba(230, 255, 255, 0.7);
+        }
+
+
+        /* --- Media Queries --- */
+        @media (max-width: 1024px) {
+            .prediction-section {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .input-form-container, .info-sidebar {
+                width: 100%;
+                flex: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-hero h1 {
+                font-size: 2.5em;
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+    <div class="logo">
+        DPS <span style="font-size:0.7em;">HealthTech</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}#home">Home</a>
+        <a href="{{ url_for('predict') }}"  style="color: var(--accent-orange);">Predict Diabetes</a>
+        <a href="{{ url_for('how_it_works') }}">How It Works</a>
+        <a href="{{ url_for('about') }}">About Project</a>
+    </nav>
+
+    <a href="{{ url_for('contact') }}" class="contact-btn">Contact Us</a>
+</header>
+
+    <div class="page-hero-container" id="top">
+        <div class="hero-background">
+            </div>
+        <section class="page-hero">
+            <h1>Initiate Your Predictive Assessment</h1>
+            <p class="lead" style="color: var(--accent-orange);">
+                Input the required biometric data below. Our Machine Learning engine will process these variables to calculate your personalized 5-year diabetes risk score.
+            </p>
+            <p>Your privacy is paramount. All data is processed securely and anonymously.</p>
+            
+            <div style="margin-top: 50px;">
+                </div>
+            
+        </section>
+    </div>
+    <div class="prediction-section">
+
+        <div class="input-form-container">
+            <h2>Required Biometric Inputs</h2>
+          <form id="predictionForm" action="{{ url_for('result') }}" method="GET">
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label for="age">Age (Years)</label>
+            <input type="number" id="age" name="age" placeholder="e.g., 45" required min="18">
+        </div>
+
+        <div class="form-group">
+            <label for="preg">Pregnancies (For Females)</label>
+            <input type="number" id="preg" name="preg" placeholder="e.g., 1" min="0">
+        </div>
+
+        <div class="form-group">
+            <label for="glucose">Plasma Glucose (mg/dL)</label>
+            <input type="number" id="glucose" name="glucose" placeholder="e.g., 148" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bp">Diastolic Blood Pressure (mmHg)</label>
+            <input type="number" id="bp" name="bp" placeholder="e.g., 72" required>
+        </div>
+
+        <div class="form-group">
+            <label for="bmi">BMI (Body Mass Index)</label>
+            <input type="number" id="bmi" name="bmi" placeholder="e.g., 33.6" step="0.1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="skin">Triceps Skin Fold Thickness (mm)</label>
+            <input type="number" id="skin" name="skin" placeholder="e.g., 35">
+        </div>
+
+        <div class="form-group">
+            <label for="insulin">2-Hour Serum Insulin (mu U/ml)</label>
+            <input type="number" id="insulin" name="insulin" placeholder="e.g., 0">
+        </div>
+
+        <div class="form-group">
+            <label for="dpf">Diabetes Pedigree Function</label>
+            <input type="number" id="dpf" name="dpf" placeholder="e.g., 0.627" step="0.001">
+        </div>
+
+        <div class="full-width">
+            <button type="submit" class="submit-btn">
+                ✓ Calculate My Diabetes Risk Score
+            </button>
+        </div>
+
+    </div>
+</form>
+
+        </div>
+
+        <div class="info-sidebar">
+            <h3>Input Guidance</h3>
+            <ul>
+                <li>Accuracy is Key: Use your most recent lab results for Glucose, Insulin, and Blood Pressure for the most reliable prediction.</li>
+                <li>Missing Data: If a value is unknown (e.g., Insulin), entering '0' is acceptable, but may decrease model confidence.</li>
+                <li>Units: Ensure all units match those specified (e.g., Glucose in mg/dL).</li>
+            </ul>
+            
+            <div class="security-note">
+                Security Note: All submitted data is immediately encrypted and processed anonymously. We do not store personally identifiable information.
+            </div>
+
+            <div class="results-preview">
+                <h3>Prediction Result Placeholder</h3>
+                <p>Submit your data in the form to see your Risk Score (%) and corresponding **Risk Level** appear here.</p>
+                <h1 style="color: var(--accent-blue); margin: 10px 0;">-- % --</h1>
+            </div>
+            
+        </div>
+    </div>
+
+    <section class="variable-analysis-section">
+        <h2>🔬 Data Science Explained: Why These Inputs?</h2>
+        <p class="section-subtitle">
+            Our predictive model relies on a curated set of eight crucial biometric and historical variables, primarily informed by the Pima Indian Diabetes Dataset. We employ proprietary weighting algorithms to maximize the predictive power of each factor.
+        </p>
+
+        <div class="analysis-grid">
+            
+            <div class="analysis-card">
+                <span class="variable-icon">&#128156;</span>
+                <h3>Metabolic Health (Glucose & Insulin)</h3>
+                <p>These variables are direct indicators of metabolic function and the body's ability to regulate blood sugar. High plasma glucose or dysregulated insulin levels are key precursors to Type 2 Diabetes.</p>
+            </div>
+
+            <div class="analysis-card">
+                <span class="variable-icon">&#128200;</span>
+                <h3>Anthropometric Indicators (BMI & Age)</h3>
+                <p>Body Mass Index (BMI) measures adiposity, a major risk factor, while Age reflects cumulative exposure to risk factors and metabolic decline. They are critical for assessing predisposing physical conditions.</p>
+            </div>
+
+            <div class="analysis-card">
+                <span class="variable-icon">&#129516;</span>
+                <h3>Genetic & Historical Risk (Pedigree & Pregnancies)</h3>
+                <p>The Diabetes Pedigree Function statistically assesses genetic predisposition based on family history. Pregnancies (for females) accounts for gestational diabetes history, a powerful future risk predictor.</p>
+            </div>
+
+            <div class="analysis-card">
+                <span class="variable-icon">&#128302;</span>
+                <h3>Vascular & Physical Measures (BP & Skin Fold)</h3>
+                <p>Blood Pressure is crucial as hypertension often co-occurs with diabetes. Skin Fold Thickness (a proxy for body fat distribution) provides supplementary data for a more holistic physical assessment.</p>
+            </div>
+            
+        </div>
+    </section>
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col about-col">
+                <h3>Diabetes Prediction System</h3>
+                <p style="color: rgba(230, 255, 255, 0.7);">
+                    Pioneering predictive health analytics using cutting-edge Machine Learning technology to fight the global rise of diabetes. Empowering individuals and clinicians with data-driven insights.
+                </p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="/index.html#home">Home</a>
+                <a href="/predict">Start Prediction</a>
+                <a href="/index.html#how-it-works">Technology Overview</a>
+                <a href="/index.html#about">Our Mission</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <a href="/faq">FAQ & Support</a>
+                <a href="/documentation">Model Documentation</a>
+                <a href="/research">Published Research</a>
+                <a href="/blog">Health Blog</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Legal & Contact</h3>
+                <a href="/contact">General Enquiries</a>
+                <a href="/press">Media & Press</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-logo-bottom">
+                DPS HealthTech
+            </div>
+            <p style="opacity: 0.6;">&copy; 2025 Diabetes Prediction System Project. All Rights Reserved. Not for diagnostic use; consult a licensed physician.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Prediction Result - DPS HealthTech</title>
+    <style>
+        /* --- General Styling --- */
+        :root {
+            --dark-bg: #032025;
+            --accent-blue: #00e6e6; /* Cyan/Blue Glow */
+            --accent-orange: #ff9900; /* Orange/Amber Glow */
+            --text-light: #e6ffff;
+            --nav-bg: rgba(3, 32, 37, 0.9);
+            --section-bg: #05333b;
+            --card-bg: #011012;
+            --shadow-glow: rgba(0, 230, 230, 0.4);
+            /* Risk Colors */
+            --risk-low: #00e64d;    /* Green */
+            --risk-moderate: #ffcc00; /* Yellow */
+            --risk-high: #ff4d4d;   /* Red */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 80px;
+            /* Animated background theme */
+            background-image: radial-gradient(circle at 10% 10%, rgba(0, 230, 230, 0.05) 1px, transparent 1px),
+                              radial-gradient(circle at 90% 90%, rgba(255, 153, 0, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: background-shift 60s linear infinite;
+        }
+
+        @keyframes background-shift {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+
+        a:hover {
+            color: var(--text-light);
+        }
+
+        /* --- Navigation Bar (Retained) --- */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+
+        .navbar a {
+            margin-left: 30px;
+            font-size: 1.05em;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .contact-btn {
+            background-color: var(--accent-blue);
+            color: var(--dark-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+
+        .contact-btn:hover {
+            background-color: var(--text-light);
+            box-shadow: 0 0 10px var(--accent-blue);
+            color: var(--dark-bg);
+        }
+        
+        /* --- Result Page Hero Section --- */
+        .page-hero-container {
+            position: relative;
+            z-index: 1;
+            min-height: 380px; /* Adjust as needed */
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/result_page_bg.jpg'); /* REPLACE WITH YOUR IMAGE URL */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.35; /* Subtle but visible */
+            filter: grayscale(80%); /* Keep it desaturated */
+            z-index: -1;
+            transition: opacity 0.5s;
+        }
+
+        .page-hero {
+            padding: 120px 5% 80px;
+            text-align: center;
+            background: rgba(3, 32, 37, 0.8); /* Darker overlay for text contrast */
+            border-bottom: 5px solid var(--accent-blue); /* Distinct border */
+            position: relative;
+        }
+
+        .page-hero h1 {
+            font-size: 4em;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--accent-blue);
+        }
+        
+        .page-hero .lead {
+            font-size: 1.3em;
+            color: var(--accent-orange);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* --- Main Result Content --- */
+        .result-content {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: var(--section-bg);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--accent-orange);
+            text-align: center;
+        }
+        
+        /* --- Score Display --- */
+        .score-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0, 230, 230, 0.1);
+        }
+
+        .score-circle-wrapper {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 30px;
+        }
+
+        .score-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 230, 230, 0.3); /* Base glow */
+            border: 5px solid var(--accent-blue); /* Base border */
+            transition: border-color 0.5s, box-shadow 0.5s;
+        }
+        
+        .score-circle span.label {
+            font-size: 1.1em;
+            color: rgba(230, 255, 255, 0.8);
+            margin-bottom: 5px;
+        }
+
+        .score-circle span.value {
+            font-size: 4.5em;
+            line-height: 1;
+            text-shadow: 0 0 15px var(--text-light);
+        }
+
+        .risk-status {
+            font-size: 2.2em;
+            font-weight: 700;
+            padding: 8px 30px;
+            border-radius: 8px;
+            color: var(--dark-bg);
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* --- Risk Gauge (Progress Bar) --- */
+        .risk-gauge-container {
+            width: 100%;
+            height: 25px;
+            background-color: #011012;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 1px solid rgba(0, 230, 230, 0.3);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .risk-gauge-fill {
+            height: 100%;
+            width: 0%; /* Will be set by JS */
+            background-color: var(--accent-blue); /* Base color */
+            border-radius: 12px;
+            transition: width 1.5s ease-out, background-color 0.8s ease-out;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+        }
+        
+        .risk-gauge-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: glow-scan 3s infinite linear;
+            opacity: 0.5;
+        }
+        
+        @keyframes glow-scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .risk-gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: rgba(230, 255, 255, 0.7);
+        }
+        
+        .risk-gauge-labels span:first-child { color: var(--risk-low); }
+        .risk-gauge-labels span:last-child { color: var(--risk-high); }
+
+
+        /* --- Next Steps and Disclaimer --- */
+        .next-steps-section {
+            text-align: left;
+            padding: 30px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin-top: 40px;
+            border: 1px solid rgba(255, 153, 0, 0.2);
+        }
+        
+        .next-steps-section h3 {
+            color: var(--accent-blue);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed rgba(0, 230, 230, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .action-btn-group {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+            min-width: 180px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-details {
+            background-color: var(--accent-orange);
+            color: var(--dark-bg);
+        }
+
+        .btn-details:hover {
+            background-color: #ffb74d;
+            box-shadow: 0 0 15px var(--accent-orange);
+            color: var(--dark-bg);
+            transform: translateY(-3px);
+        }
+
+        .btn-faq {
+            background-color: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+        
+        .btn-faq:hover {
+            background-color: var(--accent-blue);
+            color: var(--dark-bg);
+            transform: translateY(-3px);
+        }
+
+        .disclaimer-box {
+            margin-top: 40px;
+            padding: 25px;
+            border: 2px solid var(--risk-high);
+            background-color: rgba(255, 77, 77, 0.15); /* Slightly darker red tint */
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .disclaimer-icon {
+            font-size: 2em;
+            color: var(--risk-high);
+            line-height: 1;
+        }
+        
+        .disclaimer-text strong {
+            color: var(--risk-high);
+            margin-right: 5px;
+            font-size: 1.1em;
+        }
+
+        /* --- Footer (Retained) --- */
+        footer {
+            background-color: #021a1f;
+            padding: 50px 5%;
+            font-size: 0.9em;
+            border-top: 5px solid var(--accent-orange);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col {
+            width: 20%; 
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-col.about-col {
+            width: 30%; 
+            min-width: 250px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 230, 230, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(230, 255, 255, 0.7);
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-logo-bottom {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+
+        /* --- Media Queries --- */
+        @media (max-width: 768px) {
+            .navbar { display: none; }
+            .page-hero h1 { font-size: 2.5em; }
+            .page-hero .lead { font-size: 1.1em; }
+            .score-circle { width: 180px; height: 180px; }
+            .score-circle span.value { font-size: 3.5em; }
+            .risk-status { font-size: 1.8em; }
+            .action-btn-group { flex-direction: column; align-items: center; }
+            .footer-col { width: 100%; min-width: auto; }
+            .footer-col.about-col { width: 100%; }
+            .disclaimer-box { flex-direction: column; text-align: center; }
+            .disclaimer-icon { margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+ <header>
+    <div class="logo">
+        DPS <span style="font-size:0.7em;">HealthTech</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}#home">Home</a>
+        <a href="{{ url_for('predict') }}"  style="color: var(--accent-orange);">Predict Diabetes</a>
+        <a href="{{ url_for('how_it_works') }}">How It Works</a>
+        <a href="{{ url_for('about') }}" >About Project</a>
+    </nav>
+
+    <a href="{{ url_for('contact') }}" class="contact-btn">Contact Us</a>
+</header>
+
+    
+    <div class="page-hero-container">
+        <div class="hero-background">
+            </div>
+        
+        <section class="page-hero">
+            <h1>Your Personalized Diabetes Risk Report</h1>
+            <p class="lead">An in-depth analysis of your data for proactive health management.</p>
+        </section>
+    </div>
+
+    <section class="result-content">
+        
+        <div class="score-display">
+            <div class="score-circle-wrapper">
+                <div class="score-circle" id="risk-circle"> 
+                    <span class="label">5-Year Risk:</span>
+                    <span class="value" id="risk-score-value">--%</span> 
+                </div>
+            </div>
+            
+            <span class="risk-status" id="risk-status-text">Calculating...</span>
+        </div>
+
+        <div class="risk-gauge-container">
+            <div class="risk-gauge-fill" id="risk-gauge-fill"></div>
+        </div>
+        <div class="risk-gauge-labels">
+            <span>Low Risk (0%)</span>
+            <span>High Risk (100%)</span>
+        </div>
+        
+        <div class="next-steps-section">
+            <h3>Recommendations for Your Health Journey</h3>
+            <p id="recommendation-text">Based on your calculated risk, here are some general recommendations. For personalized advice, please consult a healthcare professional.</p>
+            
+            <div class="action-btn-group">
+                <a href="/details.html" class="action-btn btn-details">
+                    View Detailed Report &rarr;
+                </a>
+                <a href="/faq.html" class="action-btn btn-faq">
+                    Explore FAQs
+                </a>
+                <a href="/contact.html" class="action-btn btn-faq">
+                    Contact a Specialist
+                </a>
+            </div>
+            
+        </div>
+        
+        <div class="disclaimer-box">
+            <span class="disclaimer-icon">&#x26A0;</span> 
+            <p class="disclaimer-text">
+                <strong>Important Disclaimer:</strong> This result is provided by an AI-powered predictive model for informational purposes only. It is **NOT** a medical diagnosis. Always consult with a licensed healthcare professional for any health concerns or before making any medical decisions.
+            </p>
+        </div>
+
+    </section>
+
+
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col about-col">
+                <h3>Diabetes Prediction System</h3>
+                <p style="color: rgba(230, 255, 255, 0.7);">
+                    Pioneering predictive health analytics using cutting-edge Machine Learning technology to fight the global rise of diabetes. Empowering individuals and clinicians with data-driven insights.
+                </p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="/index.html#home">Home</a>
+                <a href="/predict">Start Prediction</a>
+                <a href="/how-it-works.html">Technology Overview</a>
+                <a href="/about.html">Our Mission</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <a href="/faq">FAQ & Support</a>
+                <a href="/documentation">Model Documentation</a>
+                <a href="/research">Published Research</a>
+                <a href="/blog">Health Blog</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Legal & Contact</h3>
+                <a href="/contact.html">General Enquiries</a>
+                <a href="/press.html">Media & Press</a>
+                <a href="/privacy.html">Privacy Policy</a>
+                <a href="/terms.html">Terms of Service</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-logo-bottom">
+                DPS HealthTech
+            </div>
+            <p style="opacity: 0.6;">&copy; 2025 Diabetes Prediction System Project. All Rights Reserved. Not for diagnostic use; consult a licensed physician.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- JavaScript for Dynamic Risk Display and Recommendations ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // *** IMPORTANT: Replace '28' with the actual risk score from your ML model ***
+            // This would typically come from a server-side render or an API call.
+            // When linking from predict.html, this variable needs to be set based on the POST data.
+            const userRiskScore = {{ risk_score }};// Example Score: Change this to test different levels (e.g., 15, 45, 70)
+
+            const riskScoreValueElement = document.getElementById('risk-score-value');
+            const riskStatusTextElement = document.getElementById('risk-status-text');
+            const riskCircleElement = document.getElementById('risk-circle');
+            const riskGaugeFillElement = document.getElementById('risk-gauge-fill');
+            const recommendationTextElement = document.getElementById('recommendation-text');
+
+            riskScoreValueElement.textContent = `${userRiskScore}%`;
+            riskGaugeFillElement.style.width = `${userRiskScore}%`;
+
+            let riskLevel = '';
+            let riskColor = '';
+            let recommendationContent = '';
+            
+            // --- Logic to determine Risk Level, Color, and Specific Recommendations ---
+            if (userRiskScore < 20) {
+                // Tier 1: LOW RISK
+                riskLevel = 'LOW RISK';
+                riskColor = 'var(--risk-low)';
+                recommendationContent = `
+                    <p style="color: var(--risk-low); font-weight: bold; margin-bottom: 15px;">Excellent work! Your predictive risk is low. The focus now is on maintenance and prevention.</p>
+                    <p><strong>What to do:</strong> Continue your current health management practices. Schedule regular wellness check-ups with your GP. Use this result as motivation to maintain healthy habits.</p>
+                    <p><strong>What to maintain:</strong> Prioritize a balanced diet rich in fiber and low in processed sugars. Aim for at least 150 minutes of moderate aerobic exercise (like brisk walking) per week. Monitor weight and stress levels.</p>
+                `;
+            } else if (userRiskScore >= 20 && userRiskScore < 50) {
+                // Tier 2: MODERATE RISK
+                riskLevel = 'MODERATE RISK';
+                riskColor = 'var(--risk-moderate)';
+                recommendationContent = `
+                    <p style="color: var(--risk-moderate); font-weight: bold; margin-bottom: 15px;">Your predictive risk is moderate. This is a crucial time for proactive intervention to significantly reduce your score.</p>
+                    <p><strong>What to do:</strong> Immediately schedule a conversation with your healthcare provider to discuss this result. Ask for a full metabolic panel (including A1C and fasting glucose tests). Focus on **reducing sedentary time**.</p>
+                    <p><strong>What to maintain:</strong> Eliminate sugary drinks and highly refined carbohydrates. Increase strength training (muscle mass improves glucose uptake). Establish a consistent sleep schedule (7-9 hours) to regulate metabolic hormones.</p>
+                `;
+            } else {
+                // Tier 3: HIGH RISK
+                riskLevel = 'HIGH RISK';
+                riskColor = 'var(--risk-high)';
+                recommendationContent = `
+                    <p style="color: var(--risk-high); font-weight: bold; margin-bottom: 15px;">Action Required: Your predictive risk is high. Immediate consultation with a specialist is strongly recommended to confirm status and begin intervention.</p>
+                    <p><strong>What to do:</strong> Contact your doctor or an endocrinologist **this week**. Show them this detailed report. They may recommend further diagnostic tests (like Oral Glucose Tolerance Test) or medication if necessary. Start tracking all meals and activity.</p>
+                    <p><strong>What to maintain:</strong> Adhere strictly to a low-glycemic diet. Incorporate high-intensity interval training (HIIT) or resistance training 3-4 times a week. Actively manage chronic stress through mindfulness or therapy, as stress significantly impacts blood sugar.</p>
+                `;
+            }
+
+            // --- Apply Styling based on Risk Level ---
+            riskStatusTextElement.textContent = riskLevel;
+            riskStatusTextElement.style.backgroundColor = riskColor;
+            riskCircleElement.style.borderColor = riskColor;
+            riskCircleElement.style.boxShadow = `0 0 20px ${riskColor}`;
+            riskCircleElement.querySelector('.value').style.color = riskColor;
+            riskGaugeFillElement.style.backgroundColor = riskColor;
+            
+            // --- Insert Recommendations ---
+            recommendationTextElement.innerHTML = recommendationContent;
+        });
+    </script>
+</body>
+</html>

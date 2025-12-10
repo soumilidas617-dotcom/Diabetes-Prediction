@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction System</title>
+    <style>
+        /* --- General Styling --- */
+        :root {
+            --dark-bg: #032025;
+            --accent-blue: #00e6e6; /* Cyan/Blue Glow */
+            --accent-orange: #ff9900; /* Orange/Amber Glow */
+            --text-light: #e6ffff;
+            --nav-bg: rgba(3, 32, 37, 0.8);
+            --section-bg: #05333b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+
+        a:hover {
+            color: var(--text-light);
+        }
+
+        /* --- Navigation Bar --- */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+
+        .navbar a {
+            margin-left: 30px;
+            font-size: 1.05em;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-blue);
+            transition: width 0.3s ease-out;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        .contact-btn {
+            background-color: var(--accent-blue);
+            color: var(--dark-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+
+        .contact-btn:hover {
+            background-color: var(--text-light);
+            box-shadow: 0 0 10px var(--accent-blue);
+            color: var(--dark-bg);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 100px 5% 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 10;
+            max-width: 50%;
+        }
+
+        .hero-content h4 {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .hero-content h1 {
+            font-size: 4.5em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(0, 230, 230, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            color: rgba(230, 255, 255, 0.8);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, var(--accent-blue), #00cccc);
+            color: var(--dark-bg);
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 2px solid var(--accent-blue);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 230, 230, 0.4);
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 5%;
+            font-size: 0.9em;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* --- DNA Visual (Concept) --- */
+        .dna-visual {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%) rotate(10deg);
+            width: 50vw;
+            height: 90vh;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .dna-strand {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .dna-strand.blue {
+            left: 5%;
+            background: radial-gradient(circle at 70% 50%, rgba(0, 230, 230, 0.2) 0%, transparent 70%);
+            animation: dna-glow-blue 4s infinite alternate;
+        }
+
+        .dna-strand.orange {
+            right: 5%;
+            background: radial-gradient(circle at 30% 50%, rgba(255, 153, 0, 0.2) 0%, transparent 70%);
+            animation: dna-glow-orange 4s infinite alternate;
+        }
+        
+        .dna-strand::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='5' cy='5' r='1' fill='%2300e6e6'/%3E%3C/svg%3E") repeat;
+            opacity: 0.1;
+            animation: dna-shift 10s linear infinite;
+        }
+
+        .dna-strand.orange::before {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3E%3Ccircle cx='5' cy='5' r='1' fill='%23ff9900'/%3E%3C/svg%3E") repeat;
+        }
+
+
+        @keyframes dna-glow-blue {
+            from { box-shadow: 0 0 10px var(--accent-blue); }
+            to { box-shadow: 0 0 30px var(--accent-blue); }
+        }
+
+        @keyframes dna-glow-orange {
+            from { box-shadow: 0 0 10px var(--accent-orange); }
+            to { box-shadow: 0 0 30px var(--accent-orange); }
+        }
+
+        @keyframes dna-shift {
+            from { background-position: 0 0; }
+            to { background-position: 100px 100px; }
+        }
+
+
+        /* --- Content Sections --- */
+        .section {
+            padding: 80px 5%;
+            text-align: center;
+            border-top: 1px solid rgba(0, 230, 230, 0.05);
+        }
+        
+        .section.dark {
+            background-color: #021a1f; 
+        }
+
+        .section h2 {
+            font-size: 2.5em;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .section p {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            font-size: 1.1em;
+            color: rgba(230, 255, 255, 0.9);
+        }
+
+        /* --- Feature Showcase Styles (from previous step) --- */
+        .feature-showcase {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .feature-box {
+            background-color: #011012; 
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 350px;
+            text-align: left;
+            border: 1px solid rgba(0, 230, 230, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .feature-box:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-orange);
+        }
+
+        .feature-box h3 {
+            color: var(--accent-blue);
+            font-size: 1.7em;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .feature-box .subtitle {
+            font-size: 1.1em;
+            color: var(--accent-orange);
+            margin-bottom: 15px;
+            display: block;
+            border-bottom: 1px dashed rgba(255, 153, 0, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .feature-box p {
+            margin: 0;
+            font-size: 1em;
+            max-width: none;
+            color: rgba(230, 255, 255, 0.7);
+        }
+        
+        /* Original Features Grid - for "Technology" section */
+        .features-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background-color: var(--section-bg);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 300px;
+            text-align: left;
+            border-left: 3px solid var(--accent-blue);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            background-color: #074a56;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-card h3 {
+            color: var(--accent-orange);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            margin: 0;
+            font-size: 1em;
+        }
+        
+        /* --- NEW STYLES for About CTA --- */
+        .about-cta-container {
+            max-width: 800px;
+            margin: 40px auto 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .about-link-box {
+            flex: 1;
+            padding: 25px;
+            border-radius: 10px;
+            background-color: var(--section-bg);
+            border: 2px solid var(--accent-blue);
+            min-width: 250px;
+            transition: background-color 0.3s, transform 0.3s;
+            text-align: center;
+        }
+        
+        .about-link-box:hover {
+            background-color: #074a56;
+            transform: translateY(-5px);
+        }
+
+        .about-link-box a {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--text-light);
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+        
+        .about-link-box a:hover {
+            color: var(--accent-orange);
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #021a1f;
+            padding: 50px 5%;
+            font-size: 0.9em;
+            border-top: 5px solid var(--accent-orange);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col {
+            width: 20%; 
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-col.about-col {
+            width: 30%; 
+            min-width: 250px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 230, 230, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(230, 255, 255, 0.7);
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .footer-col a:hover {
+            color: var(--text-light);
+            text-decoration: underline;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-logo-bottom {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+
+        /* --- Media Queries for Responsiveness --- */
+        @media (max-width: 1024px) {
+            .hero-content {
+                max-width: 80%;
+            }
+            .dna-visual {
+                width: 70vw;
+            }
+            .hero-content h1 {
+                font-size: 3.5em;
+            }
+            .features-grid, .feature-showcase, .about-cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .feature-card, .feature-box, .about-link-box {
+                max-width: 90%;
+            }
+            .footer-col {
+                width: 45%; 
+            }
+            .footer-col.about-col {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                display: none;
+            }
+            .hero {
+                text-align: center;
+            }
+            .hero-content {
+                max-width: 100%;
+            }
+            .dna-visual {
+                display: none;
+            }
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+            .footer-col {
+                width: 100%;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+ <header>
+    <div class="logo">
+        DPS <span style="font-size:0.7em;">HealthTech</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}#home" style="color: var(--accent-orange);">Home</a>
+        <a href="{{ url_for('predict') }}">Predict Diabetes</a>
+        <a href="{{ url_for('how_it_works') }}">How It Works</a>
+        <a href="{{ url_for('about') }}">About Project</a>
+    </nav>
+
+    <a href="{{ url_for('contact') }}" class="contact-btn">Contact Us</a>
+</header>
+
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h4>LEADING THE WAY IN PROACTIVE HEALTH</h4>
+            <h1>Precision: Diabetes Prediction Engine</h1>
+            <p>Utilizing Advanced Machine Learning to analyze key biomarkers and predict diabetes risk with unprecedented accuracy, enabling vital early intervention.</p>
+            <a href="/predict" class="cta-button">
+                Start Your Risk Assessment Now
+            </a>
+        </div>
+        
+        <div class="dna-visual">
+            <div class="dna-strand blue"></div>
+            <div class="dna-strand orange"></div>
+        </div>
+
+        <div class="scroll-down">
+            <p>SCROLL DOWN &nbsp;&DownArrow;</p>
+        </div>
+    </section>
+
+    <section class="section dark" id="how-it-works">
+        <h2>🔬 The Predictive Power of DPS</h2>
+        <p>Our platform transforms complex raw health data into a simple, actionable risk assessment through three core technological pillars, ensuring speed, accuracy, and personalized insight.</p>
+        
+        <div class="feature-showcase">
+            
+            <div class="feature-box">
+                <h3>Data Synthesis & Normalization</h3>
+                <span class="subtitle">AI-Driven Input Processing</span>
+                <p>We securely ingest and harmonize key inputs—glucose, BMI, BP, and patient history. Proprietary algorithms clean and normalize this data, ensuring a reliable foundation for the predictive model.</p>
+            </div>
+            
+            <div class="feature-box">
+                <h3>Core Predictive Modeling (ML)</h3>
+                <span class="subtitle">Advanced Classification Engine</span>
+                <p>The normalized dataset is processed by a trained classification model (Ensemble Learning). It expertly identifies complex, non-obvious correlations that strongly signify early risk indicators.</p>
+            </div>
+            
+            <div class="feature-box">
+                <h3>Actionable Intelligence</h3>
+                <span class="subtitle">Personalized Report Generation</span>
+                <p>The system quantifies the prediction into a clear Risk Score (%) and a simple Risk Level (Low, Moderate, High). You receive a report with immediate, personalized preventative steps.</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <section class="section" id="technology">
+        <h2>💡 Technology & Accuracy</h2>
+        <p>We are committed to delivering results with maximum confidence. Our models are continuously retrained and validated against diverse, high-quality medical data to maintain industry-leading accuracy rates.</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>ML-Driven Validation</h3>
+                <p>We employ Ensemble Learning techniques, combining multiple models like Gradient Boosting and Support Vector Machines for robust and reliable predictions.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Biometric Focus</h3>
+                <p>The platform specifically emphasizes metabolic indicators (e.g., Insulin, Glucose Tolerance) and anthropometric measures (BMI, Age) known to be key precursors to Type 2 Diabetes.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Clinical Integration Ready</h3>
+                <p>Our API is designed for seamless integration with Electronic Health Records (EHR) systems, streamlining the process for healthcare professionals.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Ethical AI and Bias Mitigation</h3>
+                <p>Rigorous testing is performed to ensure our model's predictions are fair and unbiased across different demographic groups, promoting equitable health outcomes.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section dark" id="about">
+        <h2>⭐ The DPS Commitment: A New Standard in Wellness</h2>
+        <p>The Diabetes Prediction System project was founded by a team of data scientists and medical professionals with a single vision: to move healthcare from being reactive to being proactively preventative. Our technology is not a diagnosis, but a powerful educational tool.</p>
+        <p>We aim to partner with global health organizations and individuals to reduce the burden of diabetes worldwide through the power of data science.</p>
+        
+        <div class="about-cta-container">
+            <div class="about-link-box">
+                <a href="/research">
+                    Explore Our Scientific Papers & Research &rarr;
+                </a>
+            </div>
+            <div class="about-link-box">
+                <a href="/partners">
+                    Learn About Our Global Partnerships &rarr;
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col about-col">
+                <h3>Diabetes Prediction System</h3>
+                <p style="color: rgba(230, 255, 255, 0.7);">
+                    Pioneering predictive health analytics using cutting-edge Machine Learning technology to fight the global rise of diabetes. Empowering individuals and clinicians with data-driven insights.
+                </p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="#home">Home</a>
+                <a href="/predict">Start Prediction</a>
+                <a href="#how-it-works">Technology Overview</a>
+                <a href="#about">Our Mission</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <a href="/faq">FAQ & Support</a>
+                <a href="/documentation">Model Documentation</a>
+                <a href="/research">Published Research</a>
+                <a href="/blog">Health Blog</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Legal & Contact</h3>
+                <a href="/contact">General Enquiries</a>
+                <a href="/press">Media & Press</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-logo-bottom">
+                DPS HealthTech
+            </div>
+            <p style="opacity: 0.6;">&copy; 2025 Diabetes Prediction System Project. All Rights Reserved. Not for diagnostic use; consult a licensed physician.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - DPS HealthTech</title>
+    <style>
+        /* --- General Styling --- */
+        :root {
+            --dark-bg: #032025;
+            --accent-blue: #00e6e6; /* Cyan/Blue Glow */
+            --accent-orange: #ff9900; /* Orange/Amber Glow */
+            --text-light: #e6ffff;
+            --nav-bg: rgba(3, 32, 37, 0.9);
+            --section-bg: #05333b;
+            --card-bg: #011012;
+            --shadow-glow: rgba(0, 230, 230, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 80px;
+            /* Animated background theme applied to body for interest */
+            background-image: radial-gradient(circle at 10% 10%, rgba(0, 230, 230, 0.05) 1px, transparent 1px),
+                              radial-gradient(circle at 90% 90%, rgba(255, 153, 0, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: background-shift 60s linear infinite;
+        }
+
+        @keyframes background-shift {
+            from { background-position: 0 0; }
+            to { background-position: 1000px 1000px; }
+        }
+
+        a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+
+        a:hover {
+            color: var(--text-light);
+        }
+
+        /* --- Navigation Bar (Retained) --- */
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-shadow: 0 0 5px var(--accent-blue);
+        }
+
+        .navbar a {
+            margin-left: 30px;
+            font-size: 1.05em;
+            padding: 5px 0;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .contact-btn {
+            background-color: var(--accent-blue);
+            color: var(--dark-bg);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+
+        .contact-btn:hover {
+            background-color: var(--text-light);
+            box-shadow: 0 0 10px var(--accent-blue);
+            color: var(--dark-bg);
+        }
+        
+        /* --- Page Hero Section with Background Image Container --- */
+        .page-hero-container {
+            position: relative;
+            z-index: 1; 
+            min-height: 350px; /* Ensure a decent height */
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* --- Background Image Placement --- */
+            background-image: url('https://i.pinimg.com/736x/aa/bf/68/aabf6882affa639f6e9d78dd33200a8c.jpg'); /* REPLACE WITH YOUR IMAGE URL */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.45; /* Visible Opacity */
+            filter: grayscale(70%); 
+            z-index: -1;
+            transition: opacity 0.5s;
+        }
+
+        .page-hero {
+            padding: 120px 5% 80px;
+            text-align: center;
+            background: rgba(3, 32, 37, 0.75); /* Dark overlay for text readability */
+            border-bottom: 5px solid var(--accent-orange);
+            position: relative;
+        }
+
+        .page-hero h1 {
+            font-size: 4em;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px var(--shadow-glow);
+        }
+        
+        .page-hero .lead {
+            font-size: 1.4em;
+            color: var(--accent-blue);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        /* --- Contact Content Grid --- */
+        .contact-grid {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+
+        /* Contact Form Styles */
+        .contact-form-container {
+            flex: 2; /* Takes up more space */
+            background-color: var(--section-bg);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 153, 0, 0.2);
+        }
+
+        .contact-form-container h2 {
+            color: var(--accent-orange);
+            margin-bottom: 25px;
+            font-size: 2em;
+            text-align: left;
+            border-bottom: 2px solid rgba(255, 153, 0, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1em;
+            margin-bottom: 5px;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(0, 230, 230, 0.4);
+            border-radius: 5px;
+            background-color: var(--card-bg);
+            color: var(--text-light);
+            font-size: 1em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--accent-orange);
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 153, 0, 0.5);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, var(--accent-blue), #00cccc);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 230, 230, 0.4);
+        }
+
+        /* Contact Info Sidebar */
+        .contact-info-sidebar {
+            flex: 1;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--accent-blue);
+        }
+        
+        .contact-info-sidebar h3 {
+            color: var(--accent-orange);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        .contact-detail {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(230, 255, 255, 0.1);
+        }
+
+        .contact-detail:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .contact-detail strong {
+            display: block;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .contact-detail a, .contact-detail p {
+            color: rgba(230, 255, 255, 0.85);
+            font-size: 1em;
+        }
+
+
+        /* --- Footer (Retained) --- */
+        footer {
+            background-color: #021a1f;
+            padding: 50px 5%;
+            font-size: 0.9em;
+            border-top: 5px solid var(--accent-orange);
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col {
+            width: 20%; 
+            min-width: 200px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-col.about-col {
+            width: 30%; 
+            min-width: 250px;
+        }
+
+        .footer-col h3 {
+            font-size: 1.2em;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 230, 230, 0.2);
+            padding-bottom: 5px;
+        }
+
+        .footer-col a {
+            display: block;
+            color: rgba(230, 255, 255, 0.7);
+            padding: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer-logo-bottom {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+        }
+
+
+        /* --- Media Queries --- */
+        @media (max-width: 1024px) {
+            .contact-grid {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 768px) {
+            .navbar { display: none; }
+            .page-hero h1 { font-size: 3em; }
+            .page-hero .lead { font-size: 1.2em; }
+            .footer-col { width: 100%; min-width: auto; }
+            .footer-col.about-col { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+   <header>
+    <div class="logo">
+        DPS <span style="font-size:0.7em;">HealthTech</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}#home">Home</a>
+        <a href="{{ url_for('predict') }}">Predict Diabetes</a>
+        <a href="{{ url_for('how_it_works') }}">How It Works</a>
+        <a href="{{ url_for('about') }}" style="color: var(--accent-orange);">About Project</a>
+    </nav>
+
+    <a href="{{ url_for('contact') }}" class="contact-btn">Contact Us</a>
+</header>
+
+
+    
+    <div class="page-hero-container" id="top">
+        <div class="hero-background">
+            </div>
+        
+        <section class="page-hero">
+            <h1>Get In Touch With Our Team</h1>
+            <p class="lead">Whether you have technical questions, partnership inquiries, or need support, we are here to help.</p>
+        </section>
+    </div>
+
+    <section class="contact-grid">
+        
+        <div class="contact-form-container">
+            <h2>Send Us a Message</h2>
+            <form action="/submit_contact" method="POST">
+                
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Your Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    Submit Inquiry
+                </button>
+
+            </form>
+        </div>
+
+        <div class="contact-info-sidebar">
+            <h3>Direct Contact Details</h3>
+            
+            <div class="contact-detail">
+                <strong>General Inquiries</strong>
+                <a href="mailto:info@dpshealthtech.com">info@dpshealthtech.com</a>
+            </div>
+
+            <div class="contact-detail">
+                <strong>Technical Support</strong>
+                <a href="mailto:support@dpshealthtech.com">support@dpshealthtech.com</a>
+            </div>
+            
+            <div class="contact-detail">
+                <strong>Phone</strong>
+                <p>+1 (555) 123-4567</p>
+                <p style="font-size: 0.9em; opacity: 0.8;">(Mon-Fri, 9am - 5pm EST)</p>
+            </div>
+            
+            <div class="contact-detail">
+                <strong>Our Headquarters</strong>
+                <address style="font-style: normal;">
+                    123 Data Science Ave.<br>
+                    Innovation Hub, CA 94000<br>
+                    USA
+                </address>
+            </div>
+            
+        </div>
+        
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            
+            <div class="footer-col about-col">
+                <h3>Diabetes Prediction System</h3>
+                <p style="color: rgba(230, 255, 255, 0.7);">
+                    Pioneering predictive health analytics using cutting-edge Machine Learning technology to fight the global rise of diabetes. Empowering individuals and clinicians with data-driven insights.
+                </p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <a href="/index.html#home">Home</a>
+                <a href="/predict">Start Prediction</a>
+                <a href="/how-it-works.html">Technology Overview</a>
+                <a href="/index.html#about">Our Mission</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <a href="/faq">FAQ & Support</a>
+                <a href="/documentation">Model Documentation</a>
+                <a href="/research">Published Research</a>
+                <a href="/blog">Health Blog</a>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Legal & Contact</h3>
+                <a href="#top">General Enquiries</a>
+                <a href="/press">Media & Press</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-logo-bottom">
+                DPS HealthTech
+            </div>
+            <p style="opacity: 0.6;">&copy; 2025 Diabetes Prediction System Project. All Rights Reserved. Not for diagnostic use; consult a licensed physician.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
